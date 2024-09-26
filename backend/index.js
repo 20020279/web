@@ -252,6 +252,39 @@ app.put("/update-libelium-pinned/:libeliumId", authenticateToken, async (req, re
     }
 });
 
+// Search 
+app.get("/search-libelium", authenticateToken, async (req, res) => {
+    const { user } = req.user;
+    const { query } = req.query;
+  
+    if (!query) {
+      return res
+        .status(400)
+        .json({ error: true, message: "Search query is required" });
+    }
+  
+    try {
+      const matchingLibeliums = await Libelium.find({
+        userId: user._id,
+        $or: [
+          { sensor: { $regex: new RegExp(query, "i") } }, // Case-insensitive title match
+          
+        ],
+      });
+  
+      return res.json({
+        error: false,
+        libeliumData: matchingLibeliums,
+        message: "Data matching the search query retrieved successfully",
+      });
+    } catch (error) {
+      return res.status(500).json({
+        error: true,
+        message: "Internal Server Error",
+      });
+    }
+  });
+
 app.listen(8000);
 
 

@@ -9,7 +9,7 @@ const libeliumSchema = mongoose.Schema({
     required: true
   },
   value: {
-    type: Decimal128,
+    type: String,
     required: true
   },
   isPinned: {
